@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Builds the data derived from your cartridge into the working tree:
+#
+#   assets/gradius.pak   the data pack; assets/.data-stamp records what it was built from
+#   tests/fixtures/*     oracle fixtures, through scripts/gen-fixtures.sh when it exists
+#
+#   GRADIUS_ROM=<Gradius (E).nes> scripts/extract-data [--force]
+#
+# The pack is rebuilt only when the stamp changes: the ROM's sha256 plus the
+# content of the tracked sources that define the extraction, including local
+# edits. --force rebuilds it anyway.
+set -euo pipefail
+
+force=0
+case "${1:-}" in
+    "") ;;
+    --force) force=1 ;;
+    *) echo "usage: scripts/extract-data [--force]" >&2; exit 2 ;;
+esac
+
+if [[ -z "${GRADIUS_ROM:-}" ]]; then
+    echo "extract-data: GRADIUS_ROM is not set; point it at your Gradius (E) iNES image" >&2
+    exit 1
+fi
+if [[ ! -f "$GRADIUS_ROM" ]]; then
+    echo "extract-data: no such file: $GRADIUS_ROM" >&2
+    exit 1
+fi
+# Resolve before cd: a relative path means relative to the caller.
+rom_dir="$(cd "$(dirname "$GRADIUS_ROM")" && pwd)"
+GRADIUS_ROM="$rom_dir/$(basename "$GRADIUS_ROM")"
+
+cd "$(dirname "$0")/.."
+
+sha256() {
+    if command -v sha256sum >/dev/null; then sha256sum "$@"; else shasum -a 256 "$@"; fi
+}
+
+pack=assets/gradius.pak
+stamp_file=assets/.data-stamp
+
+command -v cargo >/dev/null || { echo "extract-data: cargo not found" >&2; exit 1; }
+cargo build --release -p xtask
+
+# Tracked files under the extraction's sources, read from the working tree so
+# uncommitted edits change the stamp. Directories that do not exist yet match nothing.
+source_hashes() {
+    git ls-files -z -- xtask crates/gradius-pack crates/gradius-assets crates/gradius-audio \
+        crates/gradius-nes crates/gradius-cart crates/gradius-core/src/rom crates/gradius-extract \
+        | sort -z \
+        | while IFS= read -r -d '' file; do
+            [[ -f "$file" ]] && sha256 "$file"
+        done
+    return 0
+}
+stamp="$({ sha256 < "$GRADIUS_ROM"; source_hashes; } | sha256 | cut -d' ' -f1)"
+
+if ((force)) || [[ ! -f "$pack" || ! -f "$stamp_file" || "$(cat "$stamp_file")" != "$stamp" ]]; then
+    target/release/xtask extract "$GRADIUS_ROM" "$pack"
+    printf '%s\n' "$stamp" > "$stamp_file"
+    echo "extract-data: wrote $pack"
+else
+    echo "extract-data: $pack is up to date"
+fi
+
+if [[ -x scripts/gen-fixtures.sh ]]; then
+    scripts/gen-fixtures.sh
+fi

@@ -1,0 +1,12 @@
+# Files the ROM-data guard (scripts/check-rom-data.sh) may flag.
+# Format: <path> not-rom <reason>: every entry is data that is not cartridge data.
+
+# not-rom
+crates/gradius-core/src/font.rs not-rom hand-drawn 3x5 HUD font; its module doc says it is not cartridge font data
+crates/gradius-cart/src/lib.rs not-rom NES_MASTER_PALETTE, the hardware PPU colour table, not cartridge data
+crates/gradius-diff/src/scenario/scenarios.rs not-rom our scenario matrix: frame windows and tap lists chosen by us, not ROM data
+crates/gradius-audio/src/apu.rs not-rom NES APU length, period and duty hardware tables, not cartridge data
+crates/gradius-nes/src/apu.rs not-rom NES APU hardware tables, not cartridge data
+crates/gradius-core/src/math.rs not-rom integer sine table computed by the port, not cartridge data
+crates/gradius-core/src/stage_catalog.rs not-rom the port's per-stage catalogue (our stage matrix), not a copied ROM table
+crates/gradius-extract/src/lib.rs not-rom SHA-256 that identifies the ROM image; a hash, not data from it

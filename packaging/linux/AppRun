@@ -1,0 +1,4 @@
+#!/bin/sh
+# AppImage entry: the game; SDL2 is inside the binary, everything else is the host's.
+HERE=$(dirname "$(readlink -f "$0")")
+exec "$HERE/usr/bin/gradius" "$@"

@@ -1,0 +1,65 @@
+NOTICE
+======
+
+This repository is an independent source-level reimplementation, analysis and
+test harness for Gradius on the NES.
+
+Project source
+--------------
+
+The Rust source, scripts and documentation in this repository are dual-licensed
+under the MIT License or the Apache License, Version 2.0, at your option,
+matching the `license` field in `Cargo.toml`. The full texts are in
+`LICENSE-MIT` and `LICENSE-APACHE`.
+
+No data from the cartridge
+--------------------------
+
+The repository contains no data blocks taken from Konami's game: no ROM image,
+no asset pack, no tiles, maps, music or sound-effect captures, no screenshots
+and no oracle fixtures. Small constants and rule tables that describe the
+game's behaviour, such as those in `crates/gradius-core/src/stage1_tables/` and
+`stage1_enemies.rs`, are functional values, not cartridge data. `scripts/check-rom-data.sh` runs in
+`scripts/verify` and in CI and fails on a tracked file that looks like extracted
+data.
+
+Those files are generated on your own machine from your own Gradius (E)
+cartridge, with `GRADIUS_ROM=<rom> scripts/extract-data`: `assets/gradius.pak`,
+the copy staged for the web demo (`web/gradius.pak`) and `tests/fixtures/*`
+(except the input `.script` files, which are this project's). They are derived
+from Konami's work, remain Konami's copyright, and are not covered by the
+project's MIT/Apache-2.0 grant. Use them only for your own play, research and
+testing. Do not redistribute them, or any build that embeds them.
+
+The published downloads (the Linux AppImage and the Windows zip) and the web
+build contain no data from the cartridge either. On first start the game builds
+`gradius.pak` from the ROM file the player gives it, on that player's own
+machine. That pack is personal: do not upload it, share it or put it in a
+release.
+
+Gradius and Konami
+------------------
+
+This project is not affiliated with, endorsed by or sponsored by Konami.
+
+Gradius and its characters, graphics, music and code are copyright and
+trademarks of Konami. No NES ROM image, built asset pack (`*.pak`), rendered
+sprite or OAM sheet, screenshot or audio capture may be committed or
+distributed with this repository.
+
+Development tools (not shipped)
+-------------------------------
+
+- NESRecomp (https://github.com/mstan/nesrecomp) is licensed under PolyForm
+  Noncommercial 1.0.0. It is an external development tool for noncommercial
+  research only. It is not vendored, and none of its code or generated output
+  is committed to this repository.
+- Ghidra (https://github.com/NationalSecurityAgency/ghidra) is licensed under
+  the Apache License, Version 2.0. It is not vendored; only its exported
+  function lists and the analysis scripts in `tools/ghidra` are kept here.
+- GhidraNes (https://github.com/kylewlacy/GhidraNes) is used as a local Ghidra
+  extension. Upstream publishes no licence file, so all rights are reserved by
+  its author; it is not vendored or distributed with this repository.
+
+The tools above are development-only. No frontend or library in this workspace
+links to or bundles them.

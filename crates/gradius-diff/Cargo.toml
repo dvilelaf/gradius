@@ -1,0 +1,25 @@
+[package]
+name = "gradius-diff"
+description = "Lockstep differential harness between the native port and the cartridge oracle"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[[bin]]
+name = "gradius-diff"
+path = "src/main.rs"
+
+[[bin]]
+name = "gradius-scenarios"
+path = "src/bin/gradius-scenarios.rs"
+
+[dependencies]
+gradius-assets.workspace = true
+gradius-cart.workspace = true
+gradius-core.workspace = true
+gradius-nes.workspace = true
+png.workspace = true
+sha2.workspace = true

@@ -1,0 +1,14 @@
+# Start pauses and resumes the stage (`$15`, `docs/analysis/pause.md`).
+#
+# Menu Start at 180, stage 1 from 292. Start at 285 lands in the entry blank
+# and is ignored, 297 pauses and 310 resumes, 700/740 do it again mid-stage.
+# The ship dies at 1087 (`$1B = $A0` until 1207); Start at 1100 and 1140 is
+# ignored there.
+180:start:6
+285:start:3
+297:start:3
+310:start:3
+700:start:3
+740:start:3
+1100:start:3
+1140:start:3

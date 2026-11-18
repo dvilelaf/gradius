@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <title>Gradius (E) native port (unofficial)</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      background: #000;
+      color: #ccc;
+      font: 14px/1.4 system-ui, sans-serif;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      touch-action: none;
+      user-select: none;
+    }
+    #stage {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      background: #000;
+    }
+    #stage:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+    }
+    canvas {
+      display: block;
+      background: #000;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    #hud {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+    }
+    #bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    #bar label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #888;
+    }
+    #bar select, #bar button {
+      font: inherit;
+      color: #ccc;
+      background: #222;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 4px 8px;
+    }
+    #bar button:active {
+      background: #333;
+    }
+    #status {
+      min-height: 1.4em;
+      color: #888;
+    }
+    #touch {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 4px 8px;
+    }
+    body.touch #touch {
+      display: flex;
+    }
+    .dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 46px);
+      grid-template-rows: repeat(3, 46px);
+      gap: 2px;
+    }
+    .dpad button:nth-child(1) { grid-area: 1 / 2; }
+    .dpad button:nth-child(2) { grid-area: 2 / 1; }
+    .dpad button:nth-child(3) { grid-area: 2 / 3; }
+    .dpad button:nth-child(4) { grid-area: 3 / 2; }
+    #touch button {
+      font: inherit;
+      color: #ccc;
+      background: #1c1c1c;
+      border: 1px solid #555;
+      border-radius: 8px;
+      touch-action: none;
+    }
+    #touch button:active {
+      background: #444;
+    }
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .actions button {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+    }
+    .actions button.start {
+      width: 52px;
+      height: 34px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    #setup {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: #000;
+      text-align: center;
+      padding: 16px;
+    }
+    #setup[hidden] { display: none; }
+    #setup .panel {
+      max-width: 30em;
+      padding: 28px;
+      border: 2px dashed #555;
+      border-radius: 12px;
+    }
+    #setup.over .panel { border-color: #8cf; }
+    #setup h1 { margin: 0 0 8px; font-size: 20px; color: #eee; }
+    #setup p { margin: 8px 0; }
+    #setup button {
+      font: inherit;
+      color: #ccc;
+      background: #222;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 6px 14px;
+    }
+    #setup-error { color: #f88; }
+    #setup-detail { color: #888; font-size: 12px; overflow-wrap: anywhere; }
+    #setup progress { width: 100%; }
+    #setup .legal { color: #888; font-size: 12px; }
+    #options {
+      max-width: 22em;
+      padding: 24px;
+      color: #ccc;
+      background: #111;
+      border: 2px dashed #555;
+      border-radius: 12px;
+    }
+    #options::backdrop { background: rgba(0, 0, 0, 0.7); }
+    #options h2 { margin: 0 0 12px; font-size: 18px; color: #eee; }
+    #options label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 10px 0;
+    }
+    #options input[type="number"], #options button {
+      font: inherit;
+      color: #ccc;
+      background: #222;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 4px 8px;
+    }
+    #options p { color: #888; font-size: 12px; }
+    #options .hits { width: 5em; }
+  </style>
+</head>
+<body>
+  <div id="setup" hidden>
+    <div class="panel">
+      <h1>Gradius (E) native port (unofficial)</h1>
+      <div id="setup-ask">
+        <p>To play, give the page your own <b>Gradius (E)</b> ROM (<code>.nes</code>).
+        Drop the file here or choose it.</p>
+        <p><button type="button" id="setup-pick">Choose ROM…</button></p>
+        <p id="setup-error"></p>
+        <p id="setup-detail"></p>
+        <p>The ROM is read and converted inside your browser; it is not uploaded.
+        The result stays in this browser only.</p>
+        <p class="legal">Gradius and Konami are trademarks of Konami Digital Entertainment. This project is not affiliated with or endorsed by Konami.</p>
+      </div>
+      <div id="setup-busy" hidden>
+        <p id="setup-step">Starting…</p>
+        <progress id="setup-bar" max="1" value="0"></progress>
+        <p>This takes a couple of minutes, once.</p>
+      </div>
+      <input type="file" id="setup-file" accept=".nes" hidden>
+    </div>
+  </div>
+  <div id="stage">
+    <canvas id="screen" width="256" height="240"></canvas>
+  </div>
+  <div id="hud">
+    <div id="touch" aria-label="Touch controls">
+      <div class="dpad">
+        <button type="button" data-bit="16" aria-label="Up">▲</button>
+        <button type="button" data-bit="64" aria-label="Left">◀</button>
+        <button type="button" data-bit="128" aria-label="Right">▶</button>
+        <button type="button" data-bit="32" aria-label="Down">▼</button>
+      </div>
+      <div class="actions">
+        <button type="button" data-bit="1" aria-label="Fire">Fire</button>
+        <button type="button" data-bit="2" aria-label="Power">Power</button>
+        <button type="button" data-bit="8" class="start" aria-label="Start">Start</button>
+      </div>
+    </div>
+    <div id="bar">
+      <label>Fit
+        <select id="fit">
+          <option value="integer" selected>integer</option>
+          <option value="fit">fit</option>
+          <option value="stretch">stretch</option>
+        </select>
+      </label>
+      <button type="button" id="fullscreen">Fullscreen</button>
+      <button type="button" id="save" title="Save state in this browser (F5)">Save</button>
+      <button type="button" id="load" title="Load the saved state (F9)">Load</button>
+      <button type="button" id="options-open">Options</button>
+      <button type="button" id="install" hidden>Install</button>
+      <button type="button" id="forget" title="Remove the extracted game data from this browser">Delete game data</button>
+      <span id="status">loading…</span>
+    </div>
+  </div>
+  <dialog id="options">
+    <form method="dialog">
+      <h2>Options</h2>
+      <label>Ship hits (1 to 99, 1 is the original)
+        <input type="number" id="hits" class="hits" min="1" max="99" step="1" value="1">
+      </label>
+      <label>Invincible (nothing kills the ship)
+        <input type="checkbox" id="invincible">
+      </label>
+      <label>Start stage (1 to 7, 1 is the original)
+        <input type="number" id="start-stage" class="hits" min="1" max="7" step="1" value="1">
+      </label>
+      <label>Stage 5 slowdown (on is the original; off runs every frame)
+        <input type="checkbox" id="stage5-slowdown">
+      </label>
+      <label>2 players at once
+        <input type="checkbox" id="two-at-once">
+      </label>
+      <p>Applied when the next game starts, or at once on the title screen.</p>
+      <p><button type="submit" id="options-close">Close</button></p>
+    </form>
+  </dialog>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

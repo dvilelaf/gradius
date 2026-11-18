@@ -1,0 +1,52 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/gradius-cart",
+    "crates/gradius-pack",
+    "crates/gradius-nes",
+    "crates/gradius-core",
+    "crates/gradius-assets",
+    "crates/gradius-audio",
+    "crates/gradius-extract",
+    "crates/gradius-app",
+    "crates/gradius-wasm",
+    "crates/gradius-extract-wasm",
+    "crates/gradius-sdl",
+    "crates/gradius-diff",
+    "xtask",
+]
+default-members = [
+    "crates/gradius-cart",
+    "crates/gradius-pack",
+    "crates/gradius-nes",
+    "crates/gradius-core",
+    "crates/gradius-assets",
+    "crates/gradius-app",
+    "xtask",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.80"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/dvilelaf/gradius"
+
+[workspace.dependencies]
+gradius-cart = { path = "crates/gradius-cart" }
+gradius-pack = { path = "crates/gradius-pack" }
+gradius-nes = { path = "crates/gradius-nes" }
+gradius-core = { path = "crates/gradius-core" }
+gradius-assets = { path = "crates/gradius-assets" }
+gradius-app = { path = "crates/gradius-app" }
+gradius-audio = { path = "crates/gradius-audio" }
+gradius-extract = { path = "crates/gradius-extract" }
+thiserror = "2"
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+png = "0.17"
+sha2 = "0.10"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

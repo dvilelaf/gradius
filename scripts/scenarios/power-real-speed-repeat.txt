@@ -1,0 +1,15 @@
+# Buy SPEED repeatedly with five real capsule pickups.
+#
+# Hold fire, park at y=42 (the capsule lane), and tap B for two frames on each
+# documented pickup frame (capsule_drop.md: 589, 785, 1038, 1361, 1611). Each
+# pickup advances `$42` to 1, so each tap buys SPEED and clears the meter
+# again. The run measures `$40` (oracle) against `speed_level` (port) after
+# every buy. Keep-alive is analysis-only and is applied to both sides.
+0:a:2200
+180:start
+300:up:54
+589:b:2
+785:b:2
+1038:b:2
+1361:b:2
+1611:b:2

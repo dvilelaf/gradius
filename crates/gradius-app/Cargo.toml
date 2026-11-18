@@ -1,0 +1,16 @@
+[package]
+name = "gradius-app"
+description = "Platform-agnostic fixed-step runner for the Gradius core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+gradius-assets.workspace = true
+gradius-core.workspace = true
+
+[dev-dependencies]
+gradius-pack.workspace = true

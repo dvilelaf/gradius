@@ -1,0 +1,25 @@
+# Attract/demo input for `gradius-diff --script`, frames 0-800.
+#
+# Recorded from the oracle with:
+#   cargo xtask record-input "$ROM" --frames 800 \
+#     --out /tmp/attract-800.trace --script scripts/attract-800.txt
+#
+# The attract loop is self-driving: the ROM's demo input table at $9CB1
+# writes the held-controller byte $07 during the visible scanlines. There is
+# no pad input before frame 419. Format is FRAME:buttons[:duration].
+#
+# State timeline ($00/$1B):
+#   1-132   $00=0  title, X-scroll roll-in ($12 = $FE -> 0, -2/frame)
+#   133     $00=1  title -> demo transition (256-frame countdown $4C/$4D)
+#   390     $00=2  demo play, $1B 0
+#   392-396        $1B 1,2,3,4 (stage setup)
+#   419            $1B=$80 normal play
+#   424            scroll starts, 0.5 px/frame
+#
+# Effective input (what the player update saw):
+#   419-706  A           (demo table $80, 144 ticks x 2 frames)
+#   707-738  A+B+Down    (demo table $C4, 16 ticks x 2 frames)
+#   739-799  A           (demo table $80, 0 -> 255 ticks x 2 frames)
+419:a:288
+707:a,b,down:32
+739:a:61

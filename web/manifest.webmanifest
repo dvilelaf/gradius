@@ -1,0 +1,19 @@
+{
+  "name": "Gradius (E) native port (unofficial)",
+  "short_name": "Gradius (E) port",
+  "description": "Unofficial Gradius (E) port running in the browser from an extracted asset pack. Not affiliated with or endorsed by Konami.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

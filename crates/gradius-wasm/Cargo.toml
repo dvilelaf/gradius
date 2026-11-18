@@ -1,0 +1,21 @@
+[package]
+name = "gradius-wasm"
+description = "Minimal WebAssembly backend for the Gradius core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+gradius-app.workspace = true
+gradius-assets.workspace = true
+gradius-audio.workspace = true
+gradius-core.workspace = true
+
+[dev-dependencies]
+gradius-pack.workspace = true

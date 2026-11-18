@@ -1,0 +1,13 @@
+# table	site/evidence	entries	decoded
+80CC	PT_80CC_inline_80C9	7	7
+88B2	PT_88B2_inline_88AF	7	4
+898E	PT_898E_inline_898B	7	7
+96B8	PT_96B8_inline_96B5	5	5
+9822	PT_9822_inline_981F	16	16
+AE16	PT_AE16_inline_AE13	42	42
+C433	PT_C433_inline_C430	11	7
+8D91	PT_8D91_sprite_groups	164	0
+8E80	PT_8E80_sprite_streams	2	0
+8E81	PT_8E81_sprite_streams	44	0
+A7CA	PT_A7CA_stage_sections	68	0
+A5F8	PT_A5F8_2word	2	0

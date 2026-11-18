@@ -1,0 +1,13 @@
+[package]
+name = "gradius-assets"
+description = "Reads the self-contained Gradius asset pack"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+gradius-core.workspace = true
+gradius-pack.workspace = true
+thiserror.workspace = true

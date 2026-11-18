@@ -1,0 +1,7 @@
+# Buy OPTION (slot 5) with five real capsules.
+#
+# Pickups at 589/785/1038/1361/1611 leave `$42 = 5`; tap B at 1611 buys OPTION.
+0:a:1750
+180:start
+300:up:54
+1611:b:2

@@ -1,0 +1,10 @@
+# Stage 1 input for the 600-frame oracle fixture.
+# This is the harness default script (gradius-diff/src/script.rs), written out
+# so the recording and the native replay share one file.
+180:start
+240:start
+300:a,up:60
+360:a,right:60
+420:a,left:60
+480:a,up:60
+540:a,right:60

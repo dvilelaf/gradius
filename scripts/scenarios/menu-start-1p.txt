@@ -1,0 +1,5 @@
+# Clean 1P menu start: no menu movement, just Start.
+#
+# This is the scenario that must stay byte-exact in state and pixels from
+# reset. It is the fixture-backed part of the menu matrix.
+180:start:6

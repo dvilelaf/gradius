@@ -1,0 +1,27 @@
+[package]
+name = "gradius-sdl"
+description = "SDL2 frontend for the platform-agnostic Gradius core"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[[bin]]
+name = "gradius"
+path = "src/main.rs"
+
+[dependencies]
+gradius-assets.workspace = true
+gradius-app.workspace = true
+gradius-audio.workspace = true
+gradius-core.workspace = true
+gradius-extract.workspace = true
+ab_glyph = "0.2"
+raw-window-handle = "0.6"
+rfd = { version = "0.17", default-features = false, features = ["xdg-portal"] }
+sdl2 = { version = "0.37", features = ["raw-window-handle"] }
+
+[dev-dependencies]
+gradius-pack.workspace = true

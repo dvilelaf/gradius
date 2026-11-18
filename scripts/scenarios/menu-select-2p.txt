@@ -1,0 +1,7 @@
+# Menu control semantics, 2P selection.
+#
+# Select at 180 toggles `$0F` 0 -> 1; Start at 320 locks `$03 = $70` (2P) and
+# enters the stage. The native port is single-player: it starts the same stage
+# and documents 2P as an approximation (docs/analysis/twoplayer.md).
+180:select:6
+320:start:6

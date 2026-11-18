@@ -1,0 +1,13 @@
+# Menu control semantics, 1P.
+#
+# Real title-screen buttons from reset. The cartridge's `$8212` moves the
+# menu ship and `$0F` only on the *Select* edge; Up/Down do nothing there.
+# Select at 180 toggles `$0F` 0 -> 1 (ship Y $86 -> $96), Up/Down at 200/220
+# leave it alone, and Select at 260 toggles back to 1P. Start at 320 locks
+# `$03 = $40` and enters the 80-frame start countdown; play begins at 292+
+# 80 + init ~= 432.
+180:select:6
+200:up:6
+220:down:6
+260:select:6
+320:start:6

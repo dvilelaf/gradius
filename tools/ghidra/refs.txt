@@ -1,0 +1,46 @@
+# Cross references and pointer occurrences for key addresses
+
+## 8D92
+DATA (undefined)
+inside pointer table at 8D91 (+1)
+XREF from=PRG0::8ab8 type=DATA func=FUN_PRG0__8ab1
+xref_count=1
+OPERAND PRG0::8ab8:LDA 0x8d92,Y
+ptr_count=0
+bytes: 8D 07 8F 18 8F F6 8E 29 
+
+## 9193
+DATA (undefined)
+xref_count=0
+PTR_AT 8E81 table@8D91
+ptr_count=1
+bytes: 06 00 D1 21 00 00 D1 61 
+
+## A5FC
+DATA (undefined)
+xref_count=0
+PTR_AT A5FA
+ptr_count=1
+bytes: 01 05 00 00 01 05 01 00 
+
+## A65C
+DATA (undefined)
+xref_count=0
+PTR_AT A5F8
+ptr_count=1
+bytes: B2 80 12 A6 81 B7 A6 80 
+
+## A7CA
+DATA (undefined)
+xref_count=0
+PTR_AT A2D0
+ptr_count=1
+bytes: D8 A7 E8 A7 F8 A7 06 A8 
+
+## 8B15
+CODE (inside FUN_PRG0__8b15)
+  PRG0::8b15  LDA #0x3e
+XREF from=PRG0::809f type=UNCONDITIONAL_CALL func=vblank
+xref_count=1
+ptr_count=0
+bytes: A9 3E 85 9F A9 00 A2 03 

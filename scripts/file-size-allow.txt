@@ -1,0 +1,6 @@
+# Files over the 1000-line limit in scripts/check-file-size.sh.
+#
+# Format: <path> <current lines> <card that will split it>
+# Reviewed 2026-11-12 (card R4).
+# An entry fails the guard once the file drops back under the limit, so remove
+# it when the split lands instead of keeping the list as a record.

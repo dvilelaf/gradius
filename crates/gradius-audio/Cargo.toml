@@ -1,0 +1,34 @@
+[package]
+name = "gradius-audio"
+description = "Runtime NES APU synthesizer and register-timeline player for the Gradius port"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[features]
+default = []
+# Development-only capture tooling. Pulls in the oracle and cartridge parser;
+# neither is linked into the runtime library or the shipped game.
+capture = ["dep:gradius-nes", "dep:gradius-cart"]
+
+[dependencies]
+gradius-cart = { workspace = true, optional = true }
+gradius-nes = { workspace = true, optional = true }
+
+[dev-dependencies]
+gradius-assets.workspace = true
+gradius-cart.workspace = true
+gradius-pack.workspace = true
+
+[[bin]]
+name = "capture-audio"
+path = "src/bin/capture.rs"
+required-features = ["capture"]
+
+[[bin]]
+name = "driver-check"
+path = "src/bin/driver_check.rs"
+required-features = ["capture"]

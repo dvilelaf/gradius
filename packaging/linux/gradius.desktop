@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Gradius native port
+Comment=Unofficial native port of Gradius (E), bring your own ROM. Gradius and Konami are trademarks of Konami Digital Entertainment. This project is not affiliated with or endorsed by Konami.
+Exec=gradius
+Icon=gradius
+Categories=Game;
+Terminal=false

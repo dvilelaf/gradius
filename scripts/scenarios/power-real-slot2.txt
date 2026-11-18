@@ -1,0 +1,8 @@
+# Buy MISSILE (slot 2) with two real capsules.
+#
+# Do not spend the first capsule: `$42` reaches 2 on the second pickup at 785,
+# then tap B buys slot 2 and clears the meter.
+0:a:1000
+180:start
+300:up:54
+785:b:2

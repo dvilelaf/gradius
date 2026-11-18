@@ -1,0 +1,11 @@
+[package]
+name = "gradius-cart"
+description = "iNES container parsing, CHR decoding and the self-contained asset pack format"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+thiserror.workspace = true

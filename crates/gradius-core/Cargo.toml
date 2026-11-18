@@ -1,0 +1,13 @@
+[package]
+name = "gradius-core"
+description = "Platform-agnostic Gradius game logic and software renderer"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+
+[dev-dependencies]
+gradius-pack.workspace = true

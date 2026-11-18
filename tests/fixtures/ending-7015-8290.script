@@ -1,0 +1,4 @@
+# Oracle input for ending-7015-8290: the `xtask record-ending` run,
+# fire held on every frame and Start at 180 for six frames.
+0:a:8290
+180:start:6

@@ -1,0 +1,20 @@
+[package]
+name = "xtask"
+description = "Development tasks: cartridge inspection, asset extraction, oracle traces"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+gradius-assets.workspace = true
+gradius-audio = { workspace = true, features = ["capture"] }
+gradius-cart.workspace = true
+gradius-core.workspace = true
+gradius-extract.workspace = true
+gradius-nes.workspace = true
+gradius-pack.workspace = true
+png.workspace = true

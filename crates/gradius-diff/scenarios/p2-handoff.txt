@@ -1,0 +1,13 @@
+# 2P relay, from reset. Select at 180 picks the 2P title row; Start at 220
+# locks `$03 = $70`. P2's Start at 900 proves the second pad reaches `$06`
+# (`$06 = $10`) without switching `$18` (P1 still plays). P1's first ship dies
+# naturally at 1194: `$18` 0 -> 1, `$20` 3 -> 2, and P2 reaches normal play
+# (`$1B = $80`) at 1221. P2's Right from 1230 then moves the ship
+# (`$06 = $08 = $01` at 1230).
+#
+# Clean gate: the port follows the relay, so state and the object table match
+# the oracle on every frame from reset to 1299.
+180:select:6
+220:start:6
+p2 900:start:6
+p2 1230:right:60

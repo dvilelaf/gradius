@@ -1,0 +1,3 @@
+# Paths left out of `git archive`, which scripts/prepare-public-repo.sh uses.
+HANDOFF.md export-ignore
+docs/plans export-ignore

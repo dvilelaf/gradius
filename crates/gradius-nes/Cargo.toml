@@ -1,0 +1,12 @@
+[package]
+name = "gradius-nes"
+description = "Deterministic 6502/NES oracle used for analysis and differential testing"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+gradius-cart.workspace = true
+thiserror.workspace = true

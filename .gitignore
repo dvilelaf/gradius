@@ -1,0 +1,37 @@
+/target
+**/*.rs.bk
+
+# ROMs and anything derived from them must never be committed.
+*.nes
+*.bin
+*.pak
+*.grs
+*.bmp
+assets/.data-stamp
+/tests/fixtures/*.state
+/tests/fixtures/*.trace
+
+# Local build/analysis output
+/out
+/analysis/out
+/screenshots
+.openchamber/screenshots
+
+# Generated web artifacts
+web/gradius_wasm.wasm
+web/gradius_extract_wasm.wasm
+web/gradius.pak
+
+# Local analysis sheets derived from cartridge art
+oam-*.png
+sprite-*.png
+sprite_*.png
+sprite_groups.png
+anim-*.png
+
+# Local SDL keybindings
+keybinds.ini
+settings.ini
+
+# Packaged artifacts
+/dist/

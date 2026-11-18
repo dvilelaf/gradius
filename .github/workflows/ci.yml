@@ -1,0 +1,433 @@
+name: CI
+
+# GRADIUS_ROM_B64 is an optional repository secret holding the base64 iNES
+# image. Without it the tests that need extracted data are skipped and the jobs
+# stay green. With it, nothing derived from the ROM leaves the runner: uploaded
+# artifacts are limited to text, enforced by the "Stage text-only" steps.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  linux:
+    name: Linux (default members)
+    runs-on: ubuntu-latest
+    env:
+      GRADIUS_ROM_B64: ${{ secrets.GRADIUS_ROM_B64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Formatting
+        run: cargo fmt --all -- --check
+      - name: File size
+        run: scripts/check-file-size.sh
+      - name: ROM data guard
+        run: scripts/check-rom-data.sh
+      # Framebuffer::tile in gradius-core takes ten arguments by design. Allow
+      # that one pre-existing lint; everything else stays denied.
+      - name: Clippy
+        run: cargo clippy -- -D warnings -A clippy::too_many_arguments
+      - name: Detect ROM secret
+        id: rom
+        run: |
+          if [ -n "$GRADIUS_ROM_B64" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "GRADIUS_ROM_B64 is not configured; skipping the tests that need extracted data." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Decode cartridge
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          mkdir -p /tmp/gradius-rom
+          printf '%s\n' "$GRADIUS_ROM_B64" | base64 -d > "/tmp/gradius-rom/Gradius (E).nes"
+          echo "GRADIUS_ROM=/tmp/gradius-rom/Gradius (E).nes" >> "$GITHUB_ENV"
+      - name: Extract data
+        if: steps.rom.outputs.available == 'true'
+        run: scripts/extract-data
+      - name: Tests
+        if: steps.rom.outputs.available == 'true'
+        run: cargo test
+
+  # Replays the checked-in stage-1 fixture and renders the captured audio
+  # timelines through the native port. The fixtures and the timelines are
+  # extracted from the cartridge, so the tests run only with the ROM secret.
+  parity:
+    name: Audio and parity (optional, needs ROM secret)
+    runs-on: ubuntu-latest
+    env:
+      GRADIUS_ROM_B64: ${{ secrets.GRADIUS_ROM_B64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect ROM secret
+        id: rom
+        run: |
+          if [ -n "$GRADIUS_ROM_B64" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "GRADIUS_ROM_B64 is not configured; skipping the audio and fixture tests." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.rom.outputs.available == 'true'
+      - uses: Swatinem/rust-cache@v2
+        if: steps.rom.outputs.available == 'true'
+      - name: Decode cartridge
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          mkdir -p /tmp/gradius-rom
+          printf '%s\n' "$GRADIUS_ROM_B64" | base64 -d > "/tmp/gradius-rom/Gradius (E).nes"
+          echo "GRADIUS_ROM=/tmp/gradius-rom/Gradius (E).nes" >> "$GITHUB_ENV"
+      - name: Extract data
+        if: steps.rom.outputs.available == 'true'
+        run: scripts/extract-data
+      - name: Audio tests
+        if: steps.rom.outputs.available == 'true'
+        run: cargo test -p gradius-audio
+      - name: Fixture replay
+        if: steps.rom.outputs.available == 'true'
+        run: cargo test -p gradius-diff
+
+  # The full stage-1, stage-2 and stage-3 release gate from
+  # scripts/release-check.sh: one release build, then tests, extract,
+  # state/pixel parity, the late
+  # stage-1 pixel window (6000-7723), the boss window, the stage-2 handoff and
+  # its boss/end hand-off, the stage-3 entry state window (19429-20133) and
+  # opening pixel window (19430-19504), the real-input scenario matrix
+  # (menu/power/eruption/boss), the soundtrack check and the wasm/web checks on
+  # that build.
+  # It needs the cartridge, so it is opt-in: add a repository secret
+  # GRADIUS_ROM_B64 holding the base64-encoded iNES image. Without the secret
+  # every heavy step is skipped and the job stays green. The boss gate is hard:
+  # the 7500-9700 window must have 0 state divergences and still show the
+  # spawn/damage/clear/score/stage-2 markers. The stage-2 gate is hard too:
+  # frames 9601-12000 must have 0 state divergences and the 9601-11199 pixel
+  # window >= 99.9%; the 9601-12000 tail is report-only. The stage-3 gate is
+  # hard on what is ported: state 19429-20133 must have 0 divergences (the
+  # first natural divergence is 20134), the oracle must still show the entry,
+  # first scout and descender markers, and the 19430-19504 pixels must hold
+  # >= 99.9% (measured 100.0000%); 19429-23000 is report-only at 98.6%. The
+  # scenario gate is hard: every clean row must stay within tolerance and
+  # every row's oracle checks must pass. A failing state, pixel, boss,
+  # stage-2, stage-3, scenarios, audio or web gate exits 1 and fails the job;
+  # the per-gate logs are uploaded as an artifact.
+  # The long run stays soft (--skip-long here; the nightly workflow owns it).
+  release:
+    name: Release gate (optional, needs ROM secret)
+    runs-on: ubuntu-latest
+    env:
+      GRADIUS_ROM_B64: ${{ secrets.GRADIUS_ROM_B64 }}
+      OUT: /tmp/opencode/release-check
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect ROM secret
+        id: rom
+        run: |
+          if [ -n "$GRADIUS_ROM_B64" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "GRADIUS_ROM_B64 is not configured; skipping the release gate." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.rom.outputs.available == 'true'
+      - uses: Swatinem/rust-cache@v2
+        if: steps.rom.outputs.available == 'true'
+      - name: Install SDL2
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev
+      - name: Decode cartridge
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          mkdir -p /tmp/opencode/rom
+          printf '%s\n' "$GRADIUS_ROM_B64" | base64 -d > "/tmp/opencode/rom/Gradius (E).nes"
+          echo "GRADIUS_ROM=/tmp/opencode/rom/Gradius (E).nes" >> "$GITHUB_ENV"
+      - name: Release gate
+        if: steps.rom.outputs.available == 'true'
+        run: scripts/release-check.sh --skip-long
+      - name: Stage text-only logs
+        id: stage
+        if: failure() && steps.rom.outputs.available == 'true'
+        run: |
+          stage="$RUNNER_TEMP/release-gate-logs"
+          mkdir -p "$stage"
+          if [ -d "$OUT" ]; then
+            (cd "$OUT" && find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.json' -o -name '*.md' \) -exec cp --parents {} "$stage/" \;)
+          fi
+          forbidden=$(find "$stage" -type f \( -name '*.pak' -o -name '*.nes' -o -name '*.png' -o -name '*.bmp' -o -name '*.ppm' -o -name '*.wav' -o -name '*.state' -o -name '*.trace' -o -name '*.grs' \) -print)
+          if [ -n "$forbidden" ]; then
+            echo "::error::refusing to upload ROM-derived files:"
+            echo "$forbidden"
+            exit 1
+          fi
+      - name: Upload release gate logs
+        if: failure() && steps.rom.outputs.available == 'true' && steps.stage.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-gate-logs
+          path: ${{ runner.temp }}/release-gate-logs
+          if-no-files-found: ignore
+
+  wasm:
+    name: Core and demo (wasm32-unknown-unknown)
+    runs-on: ubuntu-latest
+    env:
+      GRADIUS_ROM_B64: ${{ secrets.GRADIUS_ROM_B64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Add wasm target
+        run: rustup target add wasm32-unknown-unknown
+      - name: Check gradius-core for wasm
+        run: scripts/check-targets.sh wasm
+      - name: Detect ROM secret
+        id: rom
+        run: |
+          if [ -n "$GRADIUS_ROM_B64" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "GRADIUS_ROM_B64 is not configured; skipping the wasm smoke test, which needs the pack." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Decode cartridge
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          mkdir -p /tmp/gradius-rom
+          printf '%s\n' "$GRADIUS_ROM_B64" | base64 -d > "/tmp/gradius-rom/Gradius (E).nes"
+          echo "GRADIUS_ROM=/tmp/gradius-rom/Gradius (E).nes" >> "$GITHUB_ENV"
+      - name: Extract data
+        if: steps.rom.outputs.available == 'true'
+        run: scripts/extract-data
+      - name: Build wasm demo
+        run: web/build.sh
+      - name: Canvas layout tests
+        run: node web/fit.test.mjs
+      - name: Wasm demo smoke
+        if: steps.rom.outputs.available == 'true'
+        run: node web/smoke.mjs
+
+  portability:
+    name: Portability guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No OS APIs in gradius-core
+        run: scripts/check-targets.sh guard
+
+  macos:
+    name: macOS (default members, needs ROM secret for tests)
+    runs-on: macos-latest
+    env:
+      GRADIUS_ROM_B64: ${{ secrets.GRADIUS_ROM_B64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect ROM secret
+        id: rom
+        run: |
+          if [ -n "$GRADIUS_ROM_B64" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "GRADIUS_ROM_B64 is not configured; skipping the macOS tests." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.rom.outputs.available == 'true'
+      - uses: Swatinem/rust-cache@v2
+        if: steps.rom.outputs.available == 'true'
+      - name: Decode cartridge
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          mkdir -p /tmp/gradius-rom
+          printf '%s\n' "$GRADIUS_ROM_B64" | base64 -d > "/tmp/gradius-rom/Gradius (E).nes"
+          echo "GRADIUS_ROM=/tmp/gradius-rom/Gradius (E).nes" >> "$GITHUB_ENV"
+      - name: Extract data
+        if: steps.rom.outputs.available == 'true'
+        run: scripts/extract-data
+      - name: Tests
+        if: steps.rom.outputs.available == 'true'
+        run: cargo test
+
+  windows:
+    name: Windows (default members, needs ROM secret for tests)
+    runs-on: windows-latest
+    env:
+      GRADIUS_ROM_B64: ${{ secrets.GRADIUS_ROM_B64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect ROM secret
+        id: rom
+        shell: bash
+        run: |
+          if [ -n "$GRADIUS_ROM_B64" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "GRADIUS_ROM_B64 is not configured; skipping the Windows tests." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.rom.outputs.available == 'true'
+      - uses: Swatinem/rust-cache@v2
+        if: steps.rom.outputs.available == 'true'
+      - name: Decode cartridge
+        if: steps.rom.outputs.available == 'true'
+        shell: bash
+        run: |
+          mkdir -p /tmp/gradius-rom
+          printf '%s\n' "$GRADIUS_ROM_B64" | base64 -d > "/tmp/gradius-rom/Gradius (E).nes"
+          echo "GRADIUS_ROM=/tmp/gradius-rom/Gradius (E).nes" >> "$GITHUB_ENV"
+      - name: Extract data
+        if: steps.rom.outputs.available == 'true'
+        shell: bash
+        run: bash scripts/extract-data
+      - name: Tests
+        if: steps.rom.outputs.available == 'true'
+        run: cargo test
+
+  sdl-linux:
+    name: SDL frontend (Linux, tests need ROM secret)
+    runs-on: ubuntu-latest
+    env:
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+      GRADIUS_ROM_B64: ${{ secrets.GRADIUS_ROM_B64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Install SDL2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev
+      - name: Build
+        run: cargo build -p gradius-sdl
+      - name: Clippy (frontend only)
+        run: cargo clippy -p gradius-sdl --all-targets --no-deps -- -D warnings
+      - name: Detect ROM secret
+        id: rom
+        run: |
+          if [ -n "$GRADIUS_ROM_B64" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "GRADIUS_ROM_B64 is not configured; skipping the SDL tests." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Decode cartridge
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          mkdir -p /tmp/gradius-rom
+          printf '%s\n' "$GRADIUS_ROM_B64" | base64 -d > "/tmp/gradius-rom/Gradius (E).nes"
+          echo "GRADIUS_ROM=/tmp/gradius-rom/Gradius (E).nes" >> "$GITHUB_ENV"
+      - name: Extract data
+        if: steps.rom.outputs.available == 'true'
+        run: scripts/extract-data
+      - name: Tests
+        if: steps.rom.outputs.available == 'true'
+        run: cargo test -p gradius-sdl
+      # The pack is extracted from the cartridge, so this step needs the
+      # secret. SDL_VIDEODRIVER/SDL_AUDIODRIVER=dummy come from the job env;
+      # --frames means the headless path never touches SDL.
+      - name: Headless smoke (--fit aspect)
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          ./target/debug/gradius --pack assets/gradius.pak \
+            --fit aspect --frames 60 --no-audio --scale 1
+
+  # Cross-checks the port against NESRecomp and the cartridge oracle. It needs
+  # the real ROM, which must never be committed, so it is opt-in: add a
+  # repository secret GRADIUS_ROM_B64 holding the base64-encoded iNES image.
+  # Without the secret every heavy step is skipped and the job stays green.
+  xcompare:
+    name: Cross-compare (optional, needs ROM secret)
+    runs-on: ubuntu-latest
+    env:
+      GRADIUS_ROM_B64: ${{ secrets.GRADIUS_ROM_B64 }}
+      NESRECOMP_BUILD: /tmp/opencode/nesrecomp-ref
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect ROM secret
+        id: rom
+        run: |
+          if [ -n "$GRADIUS_ROM_B64" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "GRADIUS_ROM_B64 is not configured; skipping the cartridge comparison." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.rom.outputs.available == 'true'
+      - uses: Swatinem/rust-cache@v2
+        if: steps.rom.outputs.available == 'true'
+      - name: Decode cartridge
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          mkdir -p /tmp/gradius-rom
+          printf '%s\n' "$GRADIUS_ROM_B64" | base64 -d > "/tmp/gradius-rom/Gradius (E).nes"
+          echo "GRADIUS_ROM=/tmp/gradius-rom/Gradius (E).nes" >> "$GITHUB_ENV"
+      - name: Install comparison dependencies
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev cmake ninja-build python3-pil
+      - name: Build native frontend and harness
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          cargo build --release -p gradius-sdl -p gradius-diff
+          cargo xtask extract "$GRADIUS_ROM" assets/gradius.pak
+      - name: Build NESRecomp host
+        if: steps.rom.outputs.available == 'true'
+        run: tools/nesrecomp/setup.sh
+      - name: Compare attract window
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          tools/nesrecomp/compare-port.sh --rom "$GRADIUS_ROM" \
+            --frames 601 --every 10 --out /tmp/opencode/xcompare
+      - name: Stage text-only report
+        id: stage
+        if: always() && steps.rom.outputs.available == 'true'
+        env:
+          OUT: /tmp/opencode/xcompare
+        run: |
+          stage="$RUNNER_TEMP/xcompare-report"
+          mkdir -p "$stage"
+          if [ -d "$OUT" ]; then
+            (cd "$OUT" && find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.json' -o -name '*.md' \) -exec cp --parents {} "$stage/" \;)
+          fi
+          forbidden=$(find "$stage" -type f \( -name '*.pak' -o -name '*.nes' -o -name '*.png' -o -name '*.bmp' -o -name '*.ppm' -o -name '*.wav' -o -name '*.state' -o -name '*.trace' -o -name '*.grs' \) -print)
+          if [ -n "$forbidden" ]; then
+            echo "::error::refusing to upload ROM-derived files:"
+            echo "$forbidden"
+            exit 1
+          fi
+      - name: Upload comparison report
+        if: always() && steps.rom.outputs.available == 'true' && steps.stage.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcompare-report
+          path: ${{ runner.temp }}/xcompare-report

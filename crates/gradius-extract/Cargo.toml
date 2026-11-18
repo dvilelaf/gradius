@@ -1,0 +1,24 @@
+[package]
+name = "gradius-extract"
+description = "Builds gradius.pak from the bytes of a Gradius (E) ROM: bytes in, bytes out"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[features]
+default = ["parallel"]
+# One thread per stage for the background captures. Always off on wasm32.
+parallel = []
+
+[dependencies]
+anyhow.workspace = true
+gradius-assets.workspace = true
+gradius-audio = { workspace = true, features = ["capture"] }
+gradius-cart.workspace = true
+gradius-core.workspace = true
+gradius-nes.workspace = true
+gradius-pack.workspace = true
+sha2.workspace = true

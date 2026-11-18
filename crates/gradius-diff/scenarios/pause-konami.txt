@@ -1,0 +1,41 @@
+# The Konami code in the Start pause (`$9758` table `$9786`, `docs/analysis/pause.md`).
+#
+# Menu Start at 180, stage 1 from 292. The code at 310 is not paused: nothing.
+# Pause at 400, the code at 420 gives the demo loadout (`$40`/`$41`/`$45`/`$46`)
+# once `$33` reaches 10 and decrements `$3B`. Resume at 500. A second pause
+# at 600 and the same code at 620 do nothing: `$3B` is negative.
+180:start:6
+310:up:3
+316:up:3
+322:down:3
+328:down:3
+334:left:3
+340:right:3
+346:left:3
+352:right:3
+358:b:3
+364:a:3
+400:start:3
+420:up:3
+426:up:3
+432:down:3
+438:down:3
+444:left:3
+450:right:3
+456:left:3
+462:right:3
+468:b:3
+474:a:3
+500:start:3
+600:start:3
+620:up:3
+626:up:3
+632:down:3
+638:down:3
+644:left:3
+650:right:3
+656:left:3
+662:right:3
+668:b:3
+674:a:3
+700:start:3

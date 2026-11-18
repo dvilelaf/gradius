@@ -1,0 +1,102 @@
+{
+  "rom": "Gradius (E).nes",
+  "window": [700, 1100],
+  "input": "Start pressed at frame 180 for 6 frames; A held for the whole run",
+  "sprite_mode": "8x16, sprite pattern table $1000; OAM stores y-1, so top = y+1",
+  "probe": "cargo xtask probe \"<rom>\" --frame N --press 180:start --buttons a --oam oam/N.bin",
+  "capture": "one headless probe per frame, N = 700..1100 (401 runs, 401 OAM images)",
+  "tile_byte": "in 8x16 mode the tile byte selects the pair (tile&$FE, tile|$01); bit 0 is ignored",
+  "types": {
+    "ship": {
+      "sprite_count": 4,
+      "note": "24x16 Vic Viper: three 8x16 body sprites at x, x+8, x+16 plus an 8x16 exhaust flame 4 px behind. The frame is selected by input direction, not by a timer: it was constant for all 401 frames at rest and for every held direction tested.",
+      "frames": [
+        {
+          "group": "$8EF6",
+          "tiles": ["03", "05", "07"],
+          "attrs": ["21", "20", "20"],
+          "observed_when": "Up held",
+          "duration_frames": 401
+        },
+        {
+          "group": "$8F07",
+          "tiles": ["09", "0B", "0D"],
+          "attrs": ["21", "20", "20"],
+          "observed_when": "no direction, or Right/Left/Down held",
+          "duration_frames": 401
+        },
+        {
+          "group": "$8F18",
+          "tiles": ["0F", "11", "13"],
+          "attrs": ["21", "20", "20"],
+          "observed_when": "never in this run",
+          "duration_frames": null
+        }
+      ],
+      "exhaust": {"tile": "DF", "attr": "23", "dx": -4, "dy": -8, "duration_frames": 401}
+    },
+
+    "ring": {
+      "sprite_count": 2,
+      "note": "Spinning ring enemy: two 8x16 sprites side by side (16x16). Four phases of exactly 6 frames each, 24-frame cycle. Phases 3 and 4 are the same artwork as 1 and 2 with both flips set and the two sprites swapped. Measured on one object from frame 700 to 757.",
+      "cycle_frames": 24,
+      "frames": [
+        {"group": "$8F5D", "tiles": ["15", "17"], "attrs": ["22", "22"], "duration_frames": 6},
+        {"group": "$8F66", "tiles": ["19", "1B"], "attrs": ["22", "22"], "duration_frames": 6},
+        {"group": "$8F6F", "tiles": ["17", "15"], "attrs": ["E2", "E2"], "duration_frames": 6},
+        {"group": "$8F78", "tiles": ["1B", "19"], "attrs": ["E2", "E2"], "duration_frames": 6}
+      ]
+    },
+
+    "bullet": {
+      "sprite_count": 1,
+      "note": "Player shot with weapon level 0. Spawns at stored x=87, y=103 (top 104), 7 px to the right per frame, gone after stored x=241 (23 frames) or earlier on an enemy hit. New shot every 21-23 frames while A is held.",
+      "frames": [
+        {"group": "$8F3B", "tiles": ["6B"], "attrs": ["22"], "duration_frames": 23}
+      ]
+    },
+
+    "enemy_bullet": {
+      "sprite_count": 2,
+      "note": "Enemy projectile, separate from the player shot: two 8x16 sprites 8 px apart (16 px wide), 2 px to the left per frame. Seen frames 1011-1060 and 1075-1096.",
+      "frames": [
+        {"group": "$90BA", "tiles": ["6F", "71"], "attrs": ["22", "22"], "duration_frames": null}
+      ]
+    },
+
+    "explosion": {
+      "note": "Two white (palette 0) burst effects were observed. Both start in empty screen space, stay put in world space (x drifts left with the 0.5 px/frame scroll) and have a fixed 5-frame step.",
+      "variants": {
+        "burst_a": {
+          "sprite_count": 2,
+          "note": "Two 8x16 sprites 7 px apart (one flipped horizontally); the pair draws a complete ring. Events at 741-755, 761-775, 870-884, 890-904, 996-1010, 1021-1035.",
+          "frames": [
+            {"group": "$9035", "tiles": ["81", "81"], "attrs": ["00", "C0"], "duration_frames": 5},
+            {"group": "$903E", "tiles": ["83", "83"], "attrs": ["00", "C0"], "duration_frames": 5},
+            {"group": "$9047", "tiles": ["85", "85"], "attrs": ["00", "C0"], "duration_frames": 5}
+          ],
+          "total_frames": 15
+        },
+        "burst_b": {
+          "sprite_count": 2,
+          "note": "Debris ring: first two phases are sprite pairs 8 px apart, last two are a single 8x16 sprite. Events at 968-987, 1038-1057, 1065-1084, 1079-1098.",
+          "frames": [
+            {"group": "$9050", "tiles": ["75", "77"], "attrs": ["00", "00"], "duration_frames": 5},
+            {"group": "$9059", "tiles": ["79", "7B"], "attrs": ["00", "00"], "duration_frames": 5},
+            {"group": "$9062", "tiles": ["7D"], "attrs": ["00"], "duration_frames": 5},
+            {"group": "$9067", "tiles": ["7F"], "attrs": ["00"], "duration_frames": 5}
+          ],
+          "total_frames": 20
+        }
+      }
+    }
+  },
+
+  "not_clustered": [
+    "Tiles $31/$33 (attrs $22 and $A2): a separate two-sprite enemy, static for 8-60+ frames while drifting down-left. Identical objects overlap on the same scanlines, so nearest-neighbour tracking lost them; not part of the ring cycle (the ring object ran a full 24-frame cycle with none of these tiles).",
+    "Sprites $B7/$B9/$C1/$C3 (ring enemy group table $8EE2..$8EF1, attrs $21) and $59/$5B (red explosion, $8F29/$8F32) are defined in the ROM but never became visible in frames 700-1100.",
+    "The $75-$7F and $81-$85 bursts appear where no enemy was visible on the previous frame, so their owner (enemy kill vs. bullet impact) could not be determined from OAM alone.",
+    "HUD power-meter sprite ($6D, attr $23, x=248, y=206) is present every frame but is not an animation.",
+    "OAM slot indices are not stable across frames (the game rebuilds the buffer in a different order), so objects were clustered by tile family plus position, not by slot."
+  ]
+}

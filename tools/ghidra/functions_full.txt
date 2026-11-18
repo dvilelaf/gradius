@@ -1,0 +1,215 @@
+# entry	size_bytes	insns	callers	name	origin	evidence
+PRG0::8010	0x5A	45	0	reset	direct	-
+PRG0::806a	0x4B	37	0	vblank	direct	-
+PRG0::80b5	0x1	1	0	irq	direct	-
+PRG0::80b6	0x16	10	1	FUN_PRG0__80b6	direct	-
+PRG0::80da	0x34	25	0	FUN_PRG0__80da	ptr	inline JSR $83E9 @ 80C9 (+0)
+PRG0::810e	0xB	4	0	FUN_PRG0__810e	ptr	inline JSR $83E9 @ 80C9 (+2)
+PRG0::8119	0x44	34	0	FUN_PRG0__8119	ptr	inline JSR $83E9 @ 80C9 (+4)
+PRG0::815d	0x7	3	0	FUN_PRG0__815d	ptr	inline JSR $83E9 @ 80C9 (+8)
+PRG0::8164	0x14	9	0	FUN_PRG0__8164	ptr	inline JSR $83E9 @ 80C9 (+12)
+PRG0::817e	0x9	5	4	FUN_PRG0__817e	call	direct callee of recovered code
+PRG0::8187	0x1C	14	2	FUN_PRG0__8187	direct	-
+PRG0::81a3	0x14	8	1	FUN_PRG0__81a3	direct	-
+PRG0::81b7	0x56	45	2	FUN_PRG0__81b7	direct	-
+PRG0::820d	0x5	2	1	FUN_PRG0__820d	direct	-
+PRG0::8212	0x3A	28	1	FUN_PRG0__8212	direct	-
+PRG0::824e	0x23	14	2	FUN_PRG0__824e	direct	-
+PRG0::8271	0x8	5	1	FUN_PRG0__8271	direct	-
+PRG0::8279	0x20	13	1	FUN_PRG0__8279	direct	-
+PRG0::8299	0x13	8	3	FUN_PRG0__8299	direct	-
+PRG0::82ae	0x11	9	1	FUN_PRG0__82ae	direct	-
+PRG0::82bf	0xE	8	1	FUN_PRG0__82bf	call	direct callee of recovered code
+PRG0::82cd	0x32	25	2	FUN_PRG0__82cd	call	direct callee of recovered code
+PRG0::82ff	0x2C	22	2	FUN_PRG0__82ff	call	direct callee of recovered code
+PRG0::832b	0x3	1	1	FUN_PRG0__832b	direct	-
+PRG0::832e	0x7	3	2	FUN_PRG0__832e	direct	-
+PRG0::8335	0xF	6	1	FUN_PRG0__8335	direct	-
+PRG0::835c	0x48	35	1	FUN_PRG0__835c	call	direct callee of recovered code
+PRG0::83a4	0xC	5	1	FUN_PRG0__83a4	call	direct callee of recovered code
+PRG0::83b0	0x5	2	6	FUN_PRG0__83b0	direct	-
+PRG0::83b5	0x5	3	3	FUN_PRG0__83b5	direct	-
+PRG0::83ba	0x2E	25	1	FUN_PRG0__83ba	call	direct callee of recovered code
+PRG0::83e9	0x1E	18	7	FUN_PRG0__83e9	direct	-
+PRG0::8407	0xA	6	7	FUN_PRG0__8407	direct	-
+PRG0::8411	0xC	7	2	FUN_PRG0__8411	direct	-
+PRG0::841d	0xC	6	2	FUN_PRG0__841d	direct	-
+PRG0::8429	0x1A	14	2	FUN_PRG0__8429	direct	-
+PRG0::8444	0x10	8	1	FUN_PRG0__8444	call	direct callee of recovered code
+PRG0::8454	0x93	75	2	FUN_PRG0__8454	call	direct callee of recovered code
+PRG0::84aa	0x4	2	1	FUN_PRG0__84aa	call	direct callee of recovered code
+PRG0::84ae	0x2A	22	1	FUN_PRG0__84ae	call	direct callee of recovered code
+PRG0::8515	0xC2	91	1	FUN_PRG0__8515	direct	-
+PRG0::8521	0x7	3	1	FUN_PRG0__8521	direct	-
+PRG0::85ed	0x59	44	23	FUN_PRG0__85ed	direct	-
+PRG0::8646	0x4	2	1	FUN_PRG0__8646	direct	-
+PRG0::864a	0x2	1	3	FUN_PRG0__864a	direct	-
+PRG0::864c	0x7	4	3	FUN_PRG0__864c	direct	-
+PRG0::8829	0x8	4	1	FUN_PRG0__8829	direct	-
+PRG0::8831	0x45	31	3	FUN_PRG0__8831	direct	-
+PRG0::8876	0x3C	31	1	FUN_PRG0__8876	direct	-
+PRG0::88bb	0x40	32	1	FUN_PRG0__88bb	ptr	inline JSR $83E9 @ 88AF (+0)
+PRG0::88fb	0x1F	15	1	FUN_PRG0__88fb	ptr	inline JSR $83E9 @ 88AF (+2)
+PRG0::891a	0x17	14	2	FUN_PRG0__891a	call	direct callee of recovered code
+PRG0::8931	0x48	32	1	FUN_PRG0__8931	ptr	inline JSR $83E9 @ 88AF (+6)
+PRG0::8979	0x21	16	1	FUN_PRG0__8979	call	direct callee of recovered code
+PRG0::8988	0x1	1	4	FUN_PRG0__8988	ptr	inline JSR $83E9 @ 898B (+0)
+PRG0::89a6	0xE	6	0	FUN_PRG0__89a6	ptr	inline JSR $83E9 @ 898B (+2)
+PRG0::89b4	0x34	26	0	FUN_PRG0__89b4	ptr	inline JSR $83E9 @ 898B (+4)
+PRG0::89e8	0x69	50	1	FUN_PRG0__89e8	ptr	inline JSR $83E9 @ 88AF (+4)
+PRG0::8a56	0x4B	33	2	FUN_PRG0__8a56	direct	-
+PRG0::8aa1	0x2	1	1	FUN_PRG0__8aa1	direct	-
+PRG0::8aa3	0xA	4	2	FUN_PRG0__8aa3	direct	-
+PRG0::8ab1	0x5C	48	2	FUN_PRG0__8ab1	direct	-
+PRG0::8b15	0x9B	78	1	FUN_PRG0__8b15	direct	-
+PRG0::8bb0	0x18	14	1	FUN_PRG0__8bb0	direct	-
+PRG0::8bc8	0x35	26	1	FUN_PRG0__8bc8	call	direct callee of recovered code
+PRG0::8c0b	0x72	55	1	FUN_PRG0__8c0b	direct	-
+PRG0::9640	0x3	1	1	FUN_PRG0__9640	call	direct callee of recovered code
+PRG0::9643	0x10A	125	0	FUN_PRG0__9643	ptr	inline JSR $83E9 @ 80C9 (+10)
+PRG0::9758	0x20	16	2	FUN_PRG0__9758	call	direct callee of recovered code
+PRG0::9790	0x8D	67	1	FUN_PRG0__9790	call	direct callee of recovered code
+PRG0::981d	0x6	3	1	FUN_PRG0__981d	call	direct callee of recovered code
+PRG0::9842	0x23	16	0	FUN_PRG0__9842	ptr	inline JSR $83E9 @ 981F (+28); inline JSR $83E9 @ 981F (+30)
+PRG0::9865	0x1A	13	1	FUN_PRG0__9865	call	direct callee of recovered code
+PRG0::987f	0x51	33	0	FUN_PRG0__987f	ptr	inline JSR $83E9 @ 981F (+22)
+PRG0::98d0	0x8	3	0	FUN_PRG0__98d0	ptr	inline JSR $83E9 @ 981F (+24)
+PRG0::98d8	0x9	4	0	FUN_PRG0__98d8	ptr	inline JSR $83E9 @ 981F (+26)
+PRG0::98e1	0xF	8	1	FUN_PRG0__98e1	call	direct callee of recovered code
+PRG0::98f7	0x46	32	0	FUN_PRG0__98f7	ptr	inline JSR $83E9 @ 981F (+12)
+PRG0::993d	0x34	21	2	FUN_PRG0__993d	call	direct callee of recovered code
+PRG0::9971	0x42	28	0	FUN_PRG0__9971	ptr	inline JSR $83E9 @ 981F (+10)
+PRG0::99b3	0x1F	14	0	FUN_PRG0__99b3	ptr	inline JSR $83E9 @ 981F (+6)
+PRG0::99d2	0xA	6	2	FUN_PRG0__99d2	call	direct callee of recovered code
+PRG0::99dc	0x25	17	0	FUN_PRG0__99dc	ptr	inline JSR $83E9 @ 981F (+4)
+PRG0::9a01	0x27	18	0	FUN_PRG0__9a01	ptr	inline JSR $83E9 @ 981F (+2)
+PRG0::9a40	0xF8	112	0	FUN_PRG0__9a40	ptr	inline JSR $83E9 @ 981F (+0)
+PRG0::9b38	0x8E	66	3	FUN_PRG0__9b38	ptr	inline JSR $83E9 @ 96B5 (+0); inline JSR $83E9 @ 981F (+14)
+PRG0::9be7	0x25	17	0	FUN_PRG0__9be7	ptr	inline JSR $83E9 @ 96B5 (+2); inline JSR $83E9 @ 981F (+16)
+PRG0::9c0c	0xC	5	0	FUN_PRG0__9c0c	ptr	inline JSR $83E9 @ 96B5 (+4); inline JSR $83E9 @ 981F (+18)
+PRG0::9c18	0x6	3	0	FUN_PRG0__9c18	ptr	inline JSR $83E9 @ 96B5 (+6); inline JSR $83E9 @ 981F (+20)
+PRG0::9c1e	0x21	15	1	FUN_PRG0__9c1e	ptr	inline JSR $83E9 @ 96B5 (+8)
+PRG0::9c3f	0x19	16	1	FUN_PRG0__9c3f	call	direct callee of recovered code
+PRG0::9c58	0xF	8	2	FUN_PRG0__9c58	call	direct callee of recovered code
+PRG0::9c67	0x4A	38	1	FUN_PRG0__9c67	call	direct callee of recovered code
+PRG0::9d7d	0xB	6	1	FUN_PRG0__9d7d	call	direct callee of recovered code
+PRG0::9d88	0x226	290	5	FUN_PRG0__9d88	call	direct callee of recovered code
+PRG0::9ff6	0x22E	253	2	FUN_PRG0__9ff6	call	direct callee of recovered code
+PRG0::a22f	0x1B	10	1	FUN_PRG0__a22f	call	direct callee of recovered code
+PRG0::a24a	0x1B	10	1	FUN_PRG0__a24a	call	direct callee of recovered code
+PRG0::a265	0x1A	11	1	FUN_PRG0__a265	call	direct callee of recovered code
+PRG0::a27f	0x12	8	2	FUN_PRG0__a27f	call	direct callee of recovered code
+PRG0::a291	0x12	8	2	FUN_PRG0__a291	call	direct callee of recovered code
+PRG0::a2a3	0x17	12	2	FUN_PRG0__a2a3	call	direct callee of recovered code
+PRG0::a2ba	0x18C	202	2	FUN_PRG0__a2ba	call	direct callee of recovered code
+PRG0::a391	0x1A	13	2	FUN_PRG0__a391	call	direct callee of recovered code
+PRG0::a460	0xC1	89	1	FUN_PRG0__a460	call	direct callee of recovered code
+PRG0::a521	0x52	31	9	FUN_PRG0__a521	call	direct callee of recovered code
+PRG0::a573	0x19	11	2	FUN_PRG0__a573	call	direct callee of recovered code
+PRG0::ada5	0x16	11	3	FUN_PRG0__ada5	call	direct callee of recovered code
+PRG0::addf	0x3B	26	1	FUN_PRG0__addf	call	direct callee of recovered code
+PRG0::ae6a	0x1	1	1	FUN_PRG0__ae6a	ptr	inline JSR $83E9 @ AE13 (+0); inline JSR $83E9 @ AE13 (+62)
+PRG0::ae93	0x71	49	0	FUN_PRG0__ae93	ptr	inline JSR $83E9 @ AE13 (+4)
+PRG0::af0a	0x1E	14	0	FUN_PRG0__af0a	ptr	inline JSR $83E9 @ AE13 (+64); inline JSR $83E9 @ AE13 (+66); inline JSR $83E9 @ AE13 (+68); inline JSR $83E9 @ AE13 (+70); inline JSR $83E9 @ AE13 (+72); inline JSR $83E9 @ AE13 (+74)
+PRG0::af28	0x5A	41	0	FUN_PRG0__af28	ptr	inline JSR $83E9 @ AE13 (+30)
+PRG0::af82	0x95	69	0	FUN_PRG0__af82	ptr	inline JSR $83E9 @ AE13 (+32)
+PRG0::b020	0x60	43	0	FUN_PRG0__b020	ptr	inline JSR $83E9 @ AE13 (+34)
+PRG0::b092	0x71	50	0	FUN_PRG0__b092	ptr	inline JSR $83E9 @ AE13 (+36)
+PRG0::b103	0xE	6	1	FUN_PRG0__b103	call	direct callee of recovered code
+PRG0::b111	0x9	4	1	FUN_PRG0__b111	call	direct callee of recovered code
+PRG0::b11a	0x10	7	2	FUN_PRG0__b11a	call	direct callee of recovered code
+PRG0::b12a	0x10	7	1	FUN_PRG0__b12a	call	direct callee of recovered code
+PRG0::b13a	0x14	8	1	FUN_PRG0__b13a	call	direct callee of recovered code
+PRG0::b14e	0x10	6	2	FUN_PRG0__b14e	call	direct callee of recovered code
+PRG0::b15e	0x8	4	4	FUN_PRG0__b15e	call	direct callee of recovered code
+PRG0::b166	0x10	6	1	FUN_PRG0__b166	call	direct callee of recovered code
+PRG0::b176	0x8	4	3	FUN_PRG0__b176	call	direct callee of recovered code
+PRG0::b17e	0x14	8	2	FUN_PRG0__b17e	call	direct callee of recovered code
+PRG0::b192	0x42	26	0	FUN_PRG0__b192	ptr	inline JSR $83E9 @ AE13 (+12)
+PRG0::b1d4	0xB	4	3	FUN_PRG0__b1d4	call	direct callee of recovered code
+PRG0::b1df	0xC	4	2	FUN_PRG0__b1df	call	direct callee of recovered code
+PRG0::b1eb	0x9	3	2	FUN_PRG0__b1eb	call	direct callee of recovered code
+PRG0::b1f4	0x6	2	2	FUN_PRG0__b1f4	call	direct callee of recovered code
+PRG0::b1ff	0x3D	25	0	FUN_PRG0__b1ff	ptr	inline JSR $83E9 @ AE13 (+8)
+PRG0::b24b	0x1B	12	6	FUN_PRG0__b24b	call	direct callee of recovered code
+PRG0::b266	0x6F	43	0	FUN_PRG0__b266	ptr	inline JSR $83E9 @ AE13 (+16)
+PRG0::b2d5	0x5	2	2	FUN_PRG0__b2d5	call	direct callee of recovered code
+PRG0::b2e0	0x8	4	1	FUN_PRG0__b2e0	call	direct callee of recovered code
+PRG0::b2e8	0x9	3	2	FUN_PRG0__b2e8	call	direct callee of recovered code
+PRG0::b2fe	0xD	5	1	FUN_PRG0__b2fe	call	direct callee of recovered code
+PRG0::b30b	0x31	19	0	FUN_PRG0__b30b	ptr	inline JSR $83E9 @ AE13 (+18)
+PRG0::b318	0x1D	14	2	FUN_PRG0__b318	call	direct callee of recovered code
+PRG0::b361	0x8	3	3	FUN_PRG0__b361	call	direct callee of recovered code
+PRG0::b369	0x8	3	0	FUN_PRG0__b369	ptr	inline JSR $83E9 @ AE13 (+20)
+PRG0::b371	0x8	3	0	FUN_PRG0__b371	ptr	inline JSR $83E9 @ AE13 (+42)
+PRG0::b379	0x43	29	0	FUN_PRG0__b379	ptr	inline JSR $83E9 @ AE13 (+22)
+PRG0::b3c5	0x37	21	0	FUN_PRG0__b3c5	ptr	inline JSR $83E9 @ AE13 (+24)
+PRG0::b3fc	0x2D	17	0	FUN_PRG0__b3fc	ptr	inline JSR $83E9 @ AE13 (+26)
+PRG0::b42e	0x28	15	0	FUN_PRG0__b42e	ptr	inline JSR $83E9 @ AE13 (+28)
+PRG0::b47a	0x64	42	0	FUN_PRG0__b47a	ptr	inline JSR $83E9 @ AE13 (+52)
+PRG0::b4ec	0xB	4	0	FUN_PRG0__b4ec	ptr	inline JSR $83E9 @ AE13 (+54)
+PRG0::b4f7	0x5C	41	0	FUN_PRG0__b4f7	ptr	inline JSR $83E9 @ AE13 (+56)
+PRG0::b553	0x10	6	0	FUN_PRG0__b553	ptr	inline JSR $83E9 @ AE13 (+58)
+PRG0::b563	0x9D	72	0	FUN_PRG0__b563	ptr	inline JSR $83E9 @ AE13 (+60)
+PRG0::b618	0xA	4	0	FUN_PRG0__b618	ptr	inline JSR $83E9 @ AE13 (+76)
+PRG0::b622	0x28	17	4	FUN_PRG0__b622	call	direct callee of recovered code
+PRG0::b656	0x1A	13	3	FUN_PRG0__b656	call	direct callee of recovered code
+PRG0::b670	0x5C	38	1	FUN_PRG0__b670	call	direct callee of recovered code
+PRG0::b6db	0x66	43	0	FUN_PRG0__b6db	ptr	inline JSR $83E9 @ AE13 (+14)
+PRG0::b741	0x40	27	0	FUN_PRG0__b741	ptr	inline JSR $83E9 @ AE13 (+38)
+PRG0::b79b	0x13D	135	0	FUN_PRG0__b79b	ptr	inline JSR $83E9 @ AE13 (+46)
+PRG0::b90d	0x1	1	0	FUN_PRG0__b90d	ptr	inline JSR $83E9 @ AE13 (+50)
+PRG0::b90e	0x1E3	201	0	FUN_PRG0__b90e	ptr	inline JSR $83E9 @ AE13 (+48)
+PRG0::bb09	0x73	54	0	FUN_PRG0__bb09	ptr	inline JSR $83E9 @ AE13 (+80)
+PRG0::bbb1	0x7B	60	2	FUN_PRG0__bbb1	call	direct callee of recovered code
+PRG0::bc3e	0x6D	50	1	FUN_PRG0__bc3e	call	direct callee of recovered code
+PRG0::bcaf	0x11D	129	2	FUN_PRG0__bcaf	call	direct callee of recovered code
+PRG0::bdcf	0x99	62	1	FUN_PRG0__bdcf	call	direct callee of recovered code
+PRG0::be8d	0x57	39	3	FUN_PRG0__be8d	call	direct callee of recovered code
+PRG0::beed	0x18	12	1	FUN_PRG0__beed	call	direct callee of recovered code
+PRG0::bf05	0x6A	47	1	FUN_PRG0__bf05	call	direct callee of recovered code
+PRG0::bf6f	0x50	34	1	FUN_PRG0__bf6f	call	direct callee of recovered code
+PRG0::bfdc	0x73	51	1	FUN_PRG0__bfdc	call	direct callee of recovered code
+PRG0::c04f	0x68	44	1	FUN_PRG0__c04f	call	direct callee of recovered code
+PRG0::c0b7	0xA	4	1	FUN_PRG0__c0b7	call	direct callee of recovered code
+PRG0::c0c1	0x108	112	2	FUN_PRG0__c0c1	call	direct callee of recovered code
+PRG0::c1d0	0x27	17	4	FUN_PRG0__c1d0	call	direct callee of recovered code
+PRG0::c1f7	0x5	3	2	FUN_PRG0__c1f7	call	direct callee of recovered code
+PRG0::c204	0x9B	75	2	FUN_PRG0__c204	call	direct callee of recovered code
+PRG0::c29f	0x1F	15	2	FUN_PRG0__c29f	call	direct callee of recovered code
+PRG0::c2be	0x6B	52	3	FUN_PRG0__c2be	call	direct callee of recovered code
+PRG0::c329	0x6C	56	1	FUN_PRG0__c329	call	direct callee of recovered code
+PRG0::c39d	0xC	5	1	FUN_PRG0__c39d	call	direct callee of recovered code
+PRG0::c3a9	0x24	15	2	FUN_PRG0__c3a9	call	direct callee of recovered code
+PRG0::c3cd	0x3C	35	7	FUN_PRG0__c3cd	call	direct callee of recovered code
+PRG0::c40d	0x25	17	2	FUN_PRG0__c40d	call	direct callee of recovered code
+PRG0::c423	0x1	1	0	FUN_PRG0__c423	ptr	inline JSR $83E9 @ C430 (+12)
+PRG0::c449	0x37	30	4	FUN_PRG0__c449	call	direct callee of recovered code
+PRG0::c480	0x6E	49	0	FUN_PRG0__c480	ptr	inline JSR $83E9 @ C430 (+0)
+PRG0::c540	0x27	17	0	FUN_PRG0__c540	ptr	inline JSR $83E9 @ C430 (+2)
+PRG0::c5a7	0x54	36	0	FUN_PRG0__c5a7	ptr	inline JSR $83E9 @ C430 (+6)
+PRG0::c64d	0x27	20	0	FUN_PRG0__c64d	ptr	inline JSR $83E9 @ C430 (+8)
+PRG0::c680	0x44	31	1	FUN_PRG0__c680	ptr	inline JSR $83E9 @ C430 (+4)
+PRG0::c6d8	0x72	55	0	FUN_PRG0__c6d8	ptr	inline JSR $83E9 @ C430 (+10)
+PRG0::c76c	0xA	5	1	FUN_PRG0__c76c	call	direct callee of recovered code
+PRG0::c776	0xA6	83	1	FUN_PRG0__c776	call	direct callee of recovered code
+PRG0::c81c	0x59	46	1	FUN_PRG0__c81c	call	direct callee of recovered code
+PRG0::c900	0x11C	130	0	FUN_PRG0__c900	ptr	inline JSR $83E9 @ AE13 (+44)
+PRG0::ca58	0xC8	85	0	FUN_PRG0__ca58	ptr	inline JSR $83E9 @ AE13 (+40)
+PRG0::cb20	0x28	15	4	FUN_PRG0__cb20	call	direct callee of recovered code
+PRG0::cb48	0x3C	27	1	FUN_PRG0__cb48	call	direct callee of recovered code
+PRG0::cb84	0x7	4	1	FUN_PRG0__cb84	call	direct callee of recovered code
+PRG0::cb8b	0x39	26	2	FUN_PRG0__cb8b	call	direct callee of recovered code
+PRG0::cbcb	0x48	32	1	FUN_PRG0__cbcb	call	direct callee of recovered code
+PRG0::cc2d	0x138	142	1	FUN_PRG0__cc2d	call	direct callee of recovered code
+PRG0::cd9f	0xE	7	1	FUN_PRG0__cd9f	call	direct callee of recovered code
+PRG0::cdad	0x7A	68	2	FUN_PRG0__cdad	call	direct callee of recovered code
+PRG0::ce83	0xB	7	1	FUN_PRG0__ce83	call	direct callee of recovered code
+PRG0::ce8e	0x99	73	1	FUN_PRG0__ce8e	call	direct callee of recovered code
+PRG0::ec18	0x94	82	28	FUN_PRG0__ec18	direct	-
+PRG0::ecb0	0x11	9	1	FUN_PRG0__ecb0	direct	-
+PRG0::ecc1	0xB	7	2	FUN_PRG0__ecc1	direct	-
+PRG0::ecfc	0x44	35	1	FUN_PRG0__ecfc	direct	-
+PRG0::ed40	0x21C	283	2	FUN_PRG0__ed40	direct	-
+PRG0::ef5c	0x44	34	2	FUN_PRG0__ef5c	direct	-
+PRG0::efa0	0x12	11	2	FUN_PRG0__efa0	direct	-

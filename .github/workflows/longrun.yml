@@ -1,0 +1,104 @@
+name: Long run
+
+# Nightly, non-blocking signal for the long cartridge run. scripts/longrun.sh
+# maps how the port stands against the cartridge over 12000 frames; both the
+# default and the boss script currently report 0 state divergences, with only
+# report-only pixel drift in attract/effect frames. This workflow never gates a
+# pull request or the release workflow: a
+# divergence only changes the uploaded bucket report, so it runs on a schedule
+# and on demand instead. It needs the cartridge, so it stays green without the
+# GRADIUS_ROM_B64 repository secret.
+
+on:
+  workflow_dispatch:
+    inputs:
+      frames:
+        description: Frames per script
+        type: string
+        default: "12000"
+  schedule:
+    - cron: "17 4 * * *"
+
+concurrency:
+  group: longrun-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  longrun:
+    name: Long run buckets
+    runs-on: ubuntu-latest
+    env:
+      GRADIUS_ROM_B64: ${{ secrets.GRADIUS_ROM_B64 }}
+      OUT: /tmp/opencode/longrun
+      FRAMES: ${{ inputs.frames || '12000' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect ROM secret
+        id: rom
+        run: |
+          if [ -n "$GRADIUS_ROM_B64" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "GRADIUS_ROM_B64 is not configured; skipping the long run." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.rom.outputs.available == 'true'
+      - uses: Swatinem/rust-cache@v2
+        if: steps.rom.outputs.available == 'true'
+      - name: Decode cartridge
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          mkdir -p /tmp/opencode/rom
+          printf '%s\n' "$GRADIUS_ROM_B64" | base64 -d > "/tmp/opencode/rom/Gradius (E).nes"
+          echo "GRADIUS_ROM=/tmp/opencode/rom/Gradius (E).nes" >> "$GITHUB_ENV"
+      - name: Build harness and extract pack
+        if: steps.rom.outputs.available == 'true'
+        run: |
+          cargo build --release -p gradius-diff
+          cargo xtask extract "$GRADIUS_ROM" "$OUT/stage1.pak"
+      - name: Long run
+        id: longrun
+        if: steps.rom.outputs.available == 'true'
+        # The gap this job exists to report must not fail the workflow. Real
+        # harness errors still show up in the summary and the uploaded logs.
+        continue-on-error: true
+        run: |
+          scripts/longrun.sh --rom "$GRADIUS_ROM" --pack "$OUT/stage1.pak" \
+            --out "$OUT" --frames "$FRAMES"
+      - name: Summarise buckets
+        if: always() && steps.rom.outputs.available == 'true'
+        run: |
+          echo "long-run step outcome: ${{ steps.longrun.outcome }}" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f "$OUT/buckets.txt" ]; then
+            { echo '```'; cat "$OUT/buckets.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "no bucket report at $OUT/buckets.txt" >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Stage text-only report
+        id: stage
+        if: always() && steps.rom.outputs.available == 'true'
+        run: |
+          stage="$RUNNER_TEMP/longrun-report"
+          mkdir -p "$stage"
+          if [ -d "$OUT" ]; then
+            (cd "$OUT" && find . -type f \( -name '*.log' -o -name '*.txt' -o -name '*.json' -o -name '*.md' \) -exec cp --parents {} "$stage/" \;)
+          fi
+          forbidden=$(find "$stage" -type f \( -name '*.pak' -o -name '*.nes' -o -name '*.png' -o -name '*.bmp' -o -name '*.ppm' -o -name '*.wav' -o -name '*.state' -o -name '*.trace' -o -name '*.grs' \) -print)
+          if [ -n "$forbidden" ]; then
+            echo "::error::refusing to upload ROM-derived files:"
+            echo "$forbidden"
+            exit 1
+          fi
+      - name: Upload long-run report
+        if: always() && steps.rom.outputs.available == 'true' && steps.stage.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: longrun-report
+          path: ${{ runner.temp }}/longrun-report
+          if-no-files-found: ignore

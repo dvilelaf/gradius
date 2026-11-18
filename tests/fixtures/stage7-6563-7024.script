@@ -1,0 +1,4 @@
+# Stage-7 clear-window input, matching the `record-ending` run.
+# Fire held on every frame, Start at 180 for six frames.
+0:a:7024
+180:start:6

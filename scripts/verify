@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# Quality gate for this repository.
+#
+#   scripts/verify fast   formatting, clippy and the default-member tests
+#   scripts/verify full   the above plus the SDL frontend and its tests
+#
+# Heavy cargo invocations are serialized with a lock so parallel workers do not
+# fight over the target directory.
+set -euo pipefail
+
+mode="${1:-fast}"
+lock="${TMPDIR:-/tmp}/gradius-verify.lock"
+
+# Crates touched since the merge-base with the upstream (the integration branch),
+# or with main when the branch has no upstream, for `verify changed`.
+changed_crates() {
+    local base
+    base="$(git merge-base HEAD '@{upstream}' 2>/dev/null || git merge-base HEAD main 2>/dev/null || true)"
+    [[ -n "$base" ]] || { echo ""; return; }
+    { git diff --name-only "$base"; git status --porcelain | awk '{print $2}'; } \
+        | sort -u \
+        | sed -n 's#^crates/\([^/]*\)/.*#\1#p; s#^xtask/.*#xtask#p' \
+        | sort -u
+}
+
+# The tests and the SDL smoke run on extracted data. With GRADIUS_ROM set,
+# extract-data refreshes it when the ROM or the extraction sources changed.
+ensure_data() {
+    if [[ -n "${GRADIUS_ROM:-}" ]]; then
+        scripts/extract-data
+    elif [[ ! -f assets/gradius.pak ]]; then
+        echo "no extracted data: run GRADIUS_ROM=<your Gradius (E) ROM> scripts/extract-data" >&2
+        exit 1
+    fi
+}
+
+run() {
+    local run_mode="${1:-fast}"
+    command -v cargo >/dev/null || { echo "cargo not found" >&2; exit 1; }
+    cargo fmt --all -- --check
+    if [[ "$run_mode" == "fast" ]]; then
+        cargo check --workspace --all-targets
+        return
+    fi
+    cargo clippy --workspace --all-targets -- -D warnings
+    ensure_data
+    # Release: the extraction and oracle replays take tens of minutes in debug.
+    cargo test --workspace --release
+    if [[ "$run_mode" == "full" ]]; then
+        cargo build -p gradius-sdl
+        SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy \
+            ./target/debug/gradius --pack assets/gradius.pak --frames 120 --no-audio --scale 1
+    fi
+}
+
+if command -v flock >/dev/null; then
+    exec 9>"$lock"
+    flock 9
+fi
+
+# No compilation, so it runs in every mode including the pre-commit `changed`.
+scripts/check-file-size.sh
+scripts/check-rom-data.sh
+
+if [[ "$mode" == "changed" ]]; then
+    ensure_data
+    mapfile -t crates < <(changed_crates)
+    if [[ ${#crates[@]} -eq 0 ]]; then
+        echo "verify changed: no crate changes; running fast gate"
+        run fast
+        exit
+    fi
+    packages=()
+    for crate in "${crates[@]}"; do packages+=(-p "$crate"); done
+    cargo fmt --all -- --check
+    cargo clippy "${packages[@]}" --all-targets -- -D warnings
+    # gradius-diff is the whole oracle battery: it only runs in `verify full`.
+    tests=()
+    for crate in "${crates[@]}"; do
+        [[ "$crate" == gradius-diff ]] || tests+=(-p "$crate")
+    done
+    if [[ ${#tests[@]} -gt 0 ]]; then
+        cargo test --release "${tests[@]}"
+    fi
+    exit
+fi
+run "$mode"

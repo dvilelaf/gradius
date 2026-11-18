@@ -1,0 +1,9 @@
+# Held-nothing meter run for `gradius-diff --script`: B is tapped at f800 (meter 2: MISSILE)
+# and at f1620 (meter 5: OPTION); the capsule at f1361 selects the already-owned
+# missile box. Run with `--keep-alive --native-keep-alive --pixel-report`; the
+# meter row (y 212-219) must match in every frame. See docs/analysis/powerups.md.
+0:a:2400
+180:start
+300:up:54
+800:b:8
+1620:b:8

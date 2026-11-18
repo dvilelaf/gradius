@@ -1,0 +1,13 @@
+# Build environment for the Linux AppImage (scripts/package-appimage.sh): Ubuntu 22.04, so the result runs on
+# glibc 2.35+ distributions. Rust through rustup (pinned). SDL2 is compiled from source (sdl2 crate, bundled +
+# static-link); the -dev packages are only so its dlopen'd backends (X11, Wayland, audio) get built, never shipped.
+FROM docker.io/library/ubuntu:22.04
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates curl file build-essential pkg-config cmake \
+        libx11-dev libxext-dev libxcursor-dev libxi-dev libxfixes-dev libxrandr-dev libxss-dev libxinerama-dev \
+        libxxf86vm-dev libxkbcommon-dev libwayland-dev wayland-protocols libdecor-0-dev libegl-dev libgl-dev \
+        libgles-dev libdrm-dev libgbm-dev libasound2-dev libpulse-dev libpipewire-0.3-dev libdbus-1-dev libudev-dev \
+    && rm -rf /var/lib/apt/lists/*
+ENV RUSTUP_HOME=/opt/rustup CARGO_HOME=/opt/cargo PATH=/opt/cargo/bin:$PATH
+RUN curl -fsSL https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain 1.90.0

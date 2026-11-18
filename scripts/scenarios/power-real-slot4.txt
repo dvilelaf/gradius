@@ -1,0 +1,7 @@
+# Buy LASER (slot 4) with four real capsules.
+#
+# Pickups at 589/785/1038/1361 leave `$42 = 4`; tap B at 1361 buys LASER.
+0:a:1500
+180:start
+300:up:54
+1361:b:2

@@ -1,0 +1,10 @@
+# MISSILE availability: a second purchase is a no-op and keeps `$42`.
+#
+# Tap B at 785 buys MISSILE and clears `$42`. Pickup four at 1361 raises `$42`
+# to 2 again; the tap at 1361 hits the `$89B4` no-op (`$41 != 0`), so the
+# meter stays at 2 on both sides and no second missile is granted.
+0:a:1500
+180:start
+300:up:54
+785:b:2
+1361:b:2

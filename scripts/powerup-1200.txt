@@ -1,0 +1,13 @@
+# Held-B power-up run for `gradius-diff --script`, frames 0-1200.
+#
+# Fire is held from boot, Start at 180 enters play, and the up window parks the
+# ship at y=42, the lane where the three stage-1 capsules arrive (fold at
+# f589, f785 and f1038; see docs/analysis/capsule_drop.md). B is held from
+# frame 400, so each capsule activates as it is picked up. A down window after
+# the third pickup exercises vertical motion on the powered-up ship.
+# Format is FRAME:buttons[:duration].
+0:a:1400
+180:start
+300:up:54
+400:b:800
+1100:down:40
