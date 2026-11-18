@@ -8,7 +8,7 @@
     "region": "Europe",
     "sha1": "489fcb79b6c20584673f04520e77c6d0dda734be"
   },
-  "project": "Gradius (E) native port",
+  "project": "Gradius for PC",
   "status": "released",
   "targets": [
     "Linux",
@@ -18,9 +18,9 @@
     "Rust",
     "SDL2"
   ],
-  "approach": "Native Rust reimplementation with a deterministic core, checked frame by frame against the cartridge in a differential harness. No emulation at runtime: the art, maps and sound are extracted once from your own copy of the European release.",
+  "approach": "Native Rust reimplementation checked frame by frame against the original. No emulation at runtime: art, maps and sound are extracted once from your own copy of the game.",
   "started": "2026-11-08",
-  "notes": "All seven stages, their bosses, the ending and the loop, two players taking turns or flying at once, save states and gamepads. One hit kills by default, like the cartridge; stage 5 runs without the cartridge's slowdown. An options menu adds ship hits (1 to 99, or Invincible), the starting stage (1 to 7) and the original stage 5 slowdown. Downloads ship no game material: on first run the game asks for your Gradius (E) ROM and builds its data locally.",
+  "notes": "All seven stages, their bosses, the ending and the loop, two players taking turns or flying at once, save states and gamepads. One hit kills by default, like the original; stage 5 runs without the original's slowdown. An options menu adds ship hits (1 to 99, or Invincible), the starting stage (1 to 7) and the original stage 5 slowdown. Downloads include nothing from the game: on first run it asks for your own copy and prepares its data locally.",
   "tags": [
     "shoot-em-up",
     "2-players",
